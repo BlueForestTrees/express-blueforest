@@ -37,15 +37,13 @@ export default (ENV, errorAdapter) => () => {
         next(err);
     });
 
-    if (errorAdapter) {
-        api.use(function (err, req, res, next) {
-            errorAdapter(err);
-            next();
-        });
-    }
-
     //ERROR
     api.use(function (err, req, res, next) {
+
+        if (errorAdapter) {
+            errorAdapter(err);
+        }
+
         res.status(err.status || 500);
         let responseBody = null;
         if (err.body) {
