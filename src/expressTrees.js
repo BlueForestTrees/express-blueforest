@@ -3,14 +3,17 @@ import path from "path";
 import morgan from "morgan";
 import bodyParser from 'body-parser';
 import read from 'fs-readdir-recursive';
+import _run from "./run";
 
 export const Router = require("express").Router;
+export const run = _run;
 
 export default (ENV, errorAdapter) => () => {
-    console.log("starting express on " + ENV.PORT);
+    const port = ENV.PORT || 8080;
+    console.log("starting express on" , port);
     const api = express();
 
-    api.use(morgan(ENV.MORGAN));
+    api.use(morgan(ENV.MORGAN || ':status :method :url :response-time ms - :res[content-length]'));
     api.use(bodyParser.json());
     api.use(bodyParser.urlencoded({extended: false}));
 
@@ -21,7 +24,7 @@ export default (ENV, errorAdapter) => () => {
     });
 
     //REST
-    let restPath = path.resolve(ENV.REST_PATH || "rest");
+    let restPath = path.resolve(ENV.REST_PATH);
     console.log("scanning rest services @", restPath);
     let count = 0;
     read(restPath).forEach(function (file) {
@@ -56,7 +59,7 @@ export default (ENV, errorAdapter) => () => {
     });
 
     //LISTENING
-    const server = api.listen(ENV.PORT);
+    const server = api.listen(port);
     console.log("started");
     return server;
 };

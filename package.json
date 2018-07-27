@@ -2,7 +2,7 @@
   "name": "trees-express",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --require babel-register --exit \"test/**/*.js\"",
-    "build": "rimraf dist && babel src -d lib",
+    "build": "rimraf lib && babel src -d lib",
     "prepublishOnly": "npm version patch && npm run build",
     "npmpublish": "npm publish"
   },
@@ -11,21 +11,21 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.3",
-    "fs-readdir-recursive": "^1.1.0",
-    "morgan": "^1.9.0"
+    "body-parser": "1.18.3",
+    "express": "4.16.3",
+    "express-validator": "5.3.0",
+    "morgan": "1.9.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-plugin-transform-builtin-extend": "^1.1.2",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-3": "^6.24.1",
-    "babel-register": "^6.26.0",
-    "rimraf": "^2.6.2"
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-plugin-transform-builtin-extend": "1.1.2",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-stage-3": "6.24.1",
+    "babel-register": "6.26.0",
+    "rimraf": "2.6.2"
   },
   "babel": {
     "presets": [
