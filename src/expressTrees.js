@@ -4,9 +4,11 @@ import morgan from "morgan";
 import bodyParser from 'body-parser';
 import read from 'fs-readdir-recursive';
 import _run from "./run";
+import {error as _err} from "./errors";
 
 export const Router = require("express").Router;
 export const run = _run;
+export const error = _err;
 
 export default (ENV, errorAdapter) => () => {
     const port = ENV.PORT || 8080;
