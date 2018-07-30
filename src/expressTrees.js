@@ -35,6 +35,16 @@ export default (ENV, errorAdapter) => () => {
     });
     console.log(`${count} services loaded`);
 
+    //RESPONSE TO RETURN
+    api.use(function (req, res, next) {
+        if (res.locals.result !== undefined) {
+            console.log("res", res.locals.result);
+            res.json(res.locals.result);
+        } else {
+            next();
+        }
+    });
+
     //NOT FOUND
     api.use(function (req, res, next) {
         const err = new Error();
@@ -57,7 +67,7 @@ export default (ENV, errorAdapter) => () => {
             responseBody = {error: err.message};
         }
         res.json(responseBody);
-        console.log("res", responseBody);
+        console.log("res error", responseBody);
     });
 
     //LISTENING

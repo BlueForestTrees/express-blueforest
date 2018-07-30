@@ -9,12 +9,20 @@ export default work => (req, res, next) =>
         .catch(err => next(err));
 
 const doWork = async (req, res, next, work) => {
+    if (!res.locals.validated) {
+        res.locals.validated = true;
+        const input = validate(req, res);
+        res.locals.result = await work(input, req, res, next);
+    } else {
+        res.locals.result = await work(res.locals.result, req, res, next);
+    }
+    next();
+};
+
+const validate = req => {
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty()) {
         throw new errors.ValidationError(validationErrors.mapped());
-    } else {
-        const body = await work(matchedData(req), req, res, next);
-        res.json(body);
-        console.log("res", body);
     }
+    return matchedData(req);
 };
