@@ -1,5 +1,5 @@
 {
-  "name": "trees-express",
+  "name": "express-json-api",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --require babel-register --exit \"test/**/*.js\"",
     "build": "rimraf lib && babel src -d lib",
