@@ -1,5 +1,5 @@
 {
-  "name": "express-json-api",
+  "name": "express-blueforest",
   "version": "1.0.1",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --require babel-register --exit \"test/**/*.js\"",
