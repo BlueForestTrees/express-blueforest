@@ -1,13 +1,16 @@
 {
   "name": "express-blueforest",
   "version": "1.0.2",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --require babel-register --exit \"test/**/*.js\"",
     "build": "rimraf lib && babel src -d lib",
     "prepublishOnly": "npm version patch && npm run build",
     "npmpublish": "npm publish"
   },
-  "description": "lib pour ms basé sur express",
+  "description": "lib pour créer des micro-apis basé sur express et json",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
