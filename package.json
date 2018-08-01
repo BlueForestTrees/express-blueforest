@@ -1,12 +1,12 @@
 {
   "name": "express-json-api",
+  "version": "1.0.0",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --require babel-register --exit \"test/**/*.js\"",
     "build": "rimraf lib && babel src -d lib",
     "prepublishOnly": "npm version patch && npm run build",
     "npmpublish": "npm publish"
   },
-  "version": "1.0.2",
   "description": "lib pour ms basé sur express",
   "main": "index.js",
   "license": "MIT",
