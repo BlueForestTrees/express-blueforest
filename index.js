@@ -1,1 +1,1 @@
-module.exports = require('./lib/expressTrees.js');
+module.exports = require('./lib/express-blueforest.js');

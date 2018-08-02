@@ -1,6 +1,5 @@
 import express from 'express';
 import path from "path";
-import morgan from "morgan";
 import bodyParser from 'body-parser';
 import read from 'fs-readdir-recursive';
 import _run from "./run";
@@ -10,12 +9,15 @@ export const Router = require("express").Router;
 export const run = _run;
 export const errors = _errors;
 
-export default (ENV, errorAdapter) => () => {
+export default (ENV, errorAdapter, init) => () => {
     const port = ENV.PORT || 8080;
     console.log("starting express on" , port);
     const api = express();
 
-    api.use(morgan(ENV.MORGAN || ':status :method :url :response-time ms - :res[content-length]'));
+    if (init) {
+        init(api)
+    }
+
     api.use(bodyParser.json());
     api.use(bodyParser.urlencoded({extended: false}));
 
@@ -26,14 +28,23 @@ export default (ENV, errorAdapter) => () => {
     });
 
     //REST
-    let restPath = path.resolve(ENV.REST_PATH);
+    let restPath = path.resolve(ENV.REST_PATH)
     console.log("scanning rest services @", restPath);
     let count = 0;
     read(restPath).forEach(function (file) {
-        file.indexOf(".js") > 1 && api.use(require(path.join(restPath, file)));
-        count++;
+        const p = path.join(restPath, file)
+        try {
+            file.indexOf("Rest.js") > 1 && api.use(require(p))
+            count++
+        } catch (e) {
+            console.error("erreur au chargement du rest service", p, e)
+        }
     });
-    console.log(`${count} services loaded`);
+    if (count > 0) {
+        console.log(`${count} rest services`)
+    } else {
+        console.error("pas de rest service!")
+    }
 
     //RESPONSE TO RETURN
     api.use(function (req, res, next) {
@@ -67,7 +78,8 @@ export default (ENV, errorAdapter) => () => {
             responseBody = {error: err.message};
         }
         res.json(responseBody);
-        console.log("res error", responseBody);
+        console.error("res error", responseBody);
+        console.error("error", err);
     });
 
     //LISTENING
