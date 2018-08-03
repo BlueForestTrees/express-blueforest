@@ -23,7 +23,7 @@ export default (ENV, errorAdapter, init) => () => {
 
     //LOG REQ
     api.use(function (req, res, next) {
-        console.log("req", {user: req.token && req.token.user, url: `${req.method} ${req.url}`}, {params: req.params}, {body: req.body});
+        console.log("req", {user: req.token && req.token.user, url: `${req.method} ${req.url}`}, {query: JSON.stringify(req.query)}, {params: JSON.stringify(req.params)}, {body: JSON.stringify(req.body)})
         next();
     });
 
@@ -49,7 +49,7 @@ export default (ENV, errorAdapter, init) => () => {
     //RESPONSE TO RETURN
     api.use(function (req, res, next) {
         if (res.locals.result !== undefined) {
-            console.log("res", res.locals.result);
+            console.log("res", JSON.stringify(res.locals.result, null, 2))
             res.json(res.locals.result);
         } else {
             next();
