@@ -12,8 +12,11 @@ const doWork = async (req, res, next, work) => {
     if (!res.locals.validated) {
         res.locals.validated = true;
         const input = validate(req, res);
+
+        console.log("RUNNING WORK INPUT", input)
         res.locals.result = await work(input, req, res, next);
     } else {
+        console.log("RUNNING WORK LOCALS", res.locals.result)
         res.locals.result = await work(res.locals.result, req, res, next);
     }
     next();

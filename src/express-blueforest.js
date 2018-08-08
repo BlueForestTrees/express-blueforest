@@ -7,6 +7,7 @@ import _errors from "./errors";
 
 export const Router = require("express").Router;
 export const run = _run;
+export const convert = _run;
 export const errors = _errors;
 
 export default (ENV, errorAdapter, init) => () => {
@@ -73,9 +74,11 @@ export default (ENV, errorAdapter, init) => () => {
         res.status(err.status || 500);
         let responseBody = null;
         if (err.body) {
-            responseBody = err.body;
-        } else if (err.message) {
-            responseBody = {error: err.message};
+            responseBody = err.body
+        } else if (err.errorCode && err.message) {
+            responseBody = {errorCode: err.errorCode, message: err.message}
+        } else if (err.errorCode) {
+            responseBody = {errorCode: err.errorCode}
         }
         res.json(responseBody);
         console.error("res error", responseBody);
