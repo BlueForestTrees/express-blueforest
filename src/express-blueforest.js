@@ -24,7 +24,7 @@ export default (ENV, errorAdapter, init) => () => {
 
     //LOG REQ
     api.use(function (req, res, next) {
-        console.log("req", {user: req.token && req.token.user, url: `${req.method} ${req.url}`}, {query: JSON.stringify(req.query)}, {params: JSON.stringify(req.params)}, {body: JSON.stringify(req.body)})
+        console.log("req", JSON.stringify({user: req.token && req.token.user, url: `${req.method} ${req.url}`}, {query: JSON.stringify(req.query)}, {params: JSON.stringify(req.params)}, {body: JSON.stringify(req.body)}, null, 2))
         next();
     });
 
