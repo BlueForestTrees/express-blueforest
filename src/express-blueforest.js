@@ -24,7 +24,10 @@ export default (ENV, errorAdapter, init) => () => {
 
     //LOG REQ
     api.use(function (req, res, next) {
-        console.log("req", JSON.stringify({user: req.token && req.token.user, url: `${req.method} ${req.url}`}, {query: JSON.stringify(req.query)}, {params: JSON.stringify(req.params)}, {body: JSON.stringify(req.body)}, null, 2))
+        console.log("HTTP REQUEST", JSON.stringify({
+            url: `${req.method} ${req.url}`,
+            body: req.body
+        }, null, 2))
         next();
     });
 
@@ -50,7 +53,7 @@ export default (ENV, errorAdapter, init) => () => {
     //RESPONSE TO RETURN
     api.use(function (req, res, next) {
         if (res.locals.result !== undefined) {
-            console.log("res", JSON.stringify(res.locals.result, null, 2))
+            console.log("HTTP RESPONSE BODY", JSON.stringify(res.locals.result, null, 2))
             res.json(res.locals.result);
         } else {
             next();
