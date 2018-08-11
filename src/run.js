@@ -12,8 +12,10 @@ const doWork = async (req, res, next, work) => {
     if (!res.locals.validated) {
         res.locals.validated = true;
         res.locals.result = await work(validate(req, res), req, res, next);
+        console.log("WORK RESULT", JSON.stringify(res.locals.result, null, 2))
     } else {
         res.locals.result = await work(res.locals.result, req, res, next);
+        console.log("WORK RESULT", JSON.stringify(res.locals.result, null, 2))
     }
     next();
 };
