@@ -53,6 +53,7 @@ export default (ENV, errorAdapter, init) => () => {
     //RESPONSE TO RETURN
     api.use(function (req, res, next) {
         if (res.locals.result !== undefined) {
+            console.log("HTTP RESPONSE BODY", JSON.stringify(res.locals.result, null, 2))
             res.json(res.locals.result);
         } else {
             next();
