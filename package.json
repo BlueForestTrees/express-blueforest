@@ -14,6 +14,7 @@
   "description": "lib pour créer des micro-apis basé sur express et json",
   "license": "MIT",
   "dependencies": {
+    "morgan": "1.9.0",
     "body-parser": "1.18.3",
     "express": "4.16.3",
     "express-validator": "5.3.0"
