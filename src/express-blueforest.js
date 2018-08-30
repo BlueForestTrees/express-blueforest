@@ -18,9 +18,7 @@ export default (ENV, errorAdapter) => () => {
     debug("starting on %o", port)
     const api = express()
     
-    api.use(morgan(ENV.MORGAN || ':status :method :url :response-time ms - :res[content-length]', { stream: { write: msg => debug(msg) } }))
-    api.use(bodyParser.json())
-    api.use(bodyParser.urlencoded({extended: false}))
+    installUtils(api, ENV.MORGAN)
     
     //LOG REQ
     api.use(function (req, res, next) {
@@ -31,25 +29,9 @@ export default (ENV, errorAdapter) => () => {
     })
     
     //REST
-    let restPath = path.resolve(ENV.REST_PATH)
-    debug("scanning rest services @%o", restPath)
-    let count = 0
-    read(restPath).forEach(function (file) {
-        const p = path.join(restPath, file)
-        try {
-            file.indexOf("Rest.js") > 1 && api.use(require(p))
-            count++
-        } catch (e) {
-            error("erreur au chargement du rest service", p, e)
-        }
-    })
-    if (count > 0) {
-        debug('%o rest services', count)
-    } else {
-        error("pas de rest service!")
-    }
+    installRestServices(api, ENV.REST_PATH)
     
-    //RESPONSE TO RETURN
+    //RESPONSE (OR NOT)
     api.use(function (req, res, next) {
         if (res.locals.result !== undefined) {
             if (debug.enabled) {
@@ -61,7 +43,7 @@ export default (ENV, errorAdapter) => () => {
         }
     })
     
-    //NOT FOUND
+    //404
     api.use(function (req, res, next) {
         const err = new Error()
         err.status = 404
@@ -70,11 +52,9 @@ export default (ENV, errorAdapter) => () => {
     
     //ERROR
     api.use(function (err, req, res, next) {
-        
         if (errorAdapter) {
             errorAdapter(err)
         }
-        
         res.status(err.status || 500)
         let responseBody = null
         if (err.body) {
@@ -94,3 +74,29 @@ export default (ENV, errorAdapter) => () => {
     debug("started")
     return server
 };
+
+const installUtils = (api,morg) => {
+    api.use(morgan(morg || ':status :method :url :response-time ms - :res[content-length]', { stream: { write: msg => debug(msg) } }))
+    api.use(bodyParser.json())
+    api.use(bodyParser.urlencoded({extended: false}))
+}
+
+const installRestServices = (api, path) => {
+    let restPath = path.resolve(path)
+    debug("scanning rest services @%o", restPath)
+    let count = 0
+    read(restPath).forEach(function (file) {
+        const p = path.join(restPath, file)
+        try {
+            file.indexOf("Rest.js") > 1 && api.use(require(p))
+            count++
+        } catch (e) {
+            error("erreur au chargement du rest service", p, e)
+        }
+    })
+    if (count > 0) {
+        debug('%o rest services', count)
+    } else {
+        error("pas de rest service!")
+    }
+}
