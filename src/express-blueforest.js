@@ -8,6 +8,7 @@ import morgan from "morgan"
 
 const debug = require('debug')('api:express')
 const error = require('debug')('api:express:err')
+export const Router = require("express").Router
 export const run = _run
 export const convert = _run
 export const errors = _errors
