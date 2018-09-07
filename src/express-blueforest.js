@@ -66,7 +66,7 @@ export default (ENV, errorAdapter) => () => {
         }
         res.json(responseBody)
         error("response %o", responseBody)
-        error("error %o", JSON.stringify(err))
+        error("error %o", err)
     })
     
     //LISTENING
