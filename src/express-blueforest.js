@@ -17,9 +17,9 @@ export default (ENV, errorAdapter) => () => {
     const port = ENV.PORT || 8080
     debug("starting on %o", port)
     const api = express()
-    
+
     installUtils(api, ENV.MORGAN)
-    
+
     //LOG REQ
     api.use(function (req, res, next) {
         if (debug.enabled) {
@@ -27,10 +27,10 @@ export default (ENV, errorAdapter) => () => {
         }
         next()
     })
-    
+
     //REST
     installRestServices(api, ENV.REST_PATH)
-    
+
     //RESPONSE (OR NOT)
     api.use(function (req, res, next) {
         if (res.locals.result !== undefined) {
@@ -42,14 +42,14 @@ export default (ENV, errorAdapter) => () => {
             next()
         }
     })
-    
+
     //404
     api.use(function (req, res, next) {
         const err = new Error()
         err.status = 404
         next(err)
     })
-    
+
     //ERROR
     api.use(function (err, req, res, next) {
         if (errorAdapter) {
@@ -68,15 +68,15 @@ export default (ENV, errorAdapter) => () => {
         error("response %o", responseBody)
         error("error %o", err)
     })
-    
+
     //LISTENING
     const server = api.listen(port)
     debug("started")
     return server
 };
 
-const installUtils = (api,morg) => {
-    api.use(morgan(morg || ':status :method :url :response-time ms - :res[content-length]', { stream: { write: msg => debug(msg) } }))
+const installUtils = (api, morg) => {
+    api.use(morgan(morg || ':status :method :url :response-time ms - :res[content-length]', {stream: {write: msg => debug(msg)}}))
     api.use(bodyParser.json())
     api.use(bodyParser.urlencoded({extended: false}))
 }
@@ -89,6 +89,7 @@ const installRestServices = (api, p) => {
         const p = path.join(restPath, file)
         try {
             file.indexOf("Rest.js") > 1 && api.use(require(p))
+            debug(file)
             count++
         } catch (e) {
             error("erreur au chargement du rest service", p, e)
