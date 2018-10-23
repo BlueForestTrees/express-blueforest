@@ -14,7 +14,7 @@ export const convert = _run
 export const errors = _errors
 
 export default (ENV, errorAdapter) => () => {
-    const port = ENV.PORT || 8080
+    const port = ENV.PORT || 80
     debug("starting on %o", port)
     const api = express()
 
