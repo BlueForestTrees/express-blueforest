@@ -21,33 +21,33 @@ export default (ENV, errorAdapter) => () => {
     installUtils(api, ENV.MORGAN)
 
     //LOG REQ
-    api.use(function (req, res, next) {
-        if (debug.enabled) {
-            debug("HTTP REQUEST BODY %o", req.body)
-        }
-        next()
-    })
+    if (debug.enabled) {
+        api.use(function (req, res, next) {
+            const request = {
+                method: req.method,
+                url: req.originalUrl,
+                body: req.body
+            }
+            debug(request)
+            next()
+        })
+    }
 
     //REST
     installRestServices(api, ENV.REST_PATH)
 
     //RESPONSE (OR NOT)
     api.use(function (req, res, next) {
-        if (res.locals.result !== undefined) {
+        if (res.locals.result === undefined) {
+            const err = new Error()
+            err.status = 404
+            next(err)
+        } else {
             if (debug.enabled) {
                 debug("HTTP RESPONSE BODY %o", res.locals.result)
             }
             res.json(res.locals.result)
-        } else {
-            next()
         }
-    })
-
-    //404
-    api.use(function (req, res, next) {
-        const err = new Error()
-        err.status = 404
-        next(err)
     })
 
     //ERROR
@@ -56,27 +56,26 @@ export default (ENV, errorAdapter) => () => {
             errorAdapter(err)
         }
         res.status(err.status || 500)
-        let responseBody = null
+        let body = null
         if (err.body) {
-            responseBody = err.body
+            body = err.body
         } else if (err.errorCode && err.message) {
-            responseBody = {errorCode: err.errorCode, message: err.message}
+            body = {errorCode: err.errorCode, message: err.message}
         } else if (err.errorCode) {
-            responseBody = {errorCode: err.errorCode}
+            body = {errorCode: err.errorCode}
         }
-        res.json(responseBody)
-        error("response %o", responseBody)
-        error("error %o", err)
+        res.json(body)
+        console.error(err)
     })
 
     //LISTENING
-    const server = api.listen(port)
-    debug("started")
-    return server
+    return api.listen(port)
 };
 
 const installUtils = (api, morg) => {
-    api.use(morgan(morg || ':status :method :url :response-time ms - :res[content-length]', {stream: {write: msg => debug(msg)}}))
+    if (debug.enabled) {
+        api.use(morgan(morg || ':status :method :url :response-time ms - :res[content-length]', {stream: {write: msg => debug(msg)}}))
+    }
     api.use(bodyParser.json())
     api.use(bodyParser.urlencoded({extended: false}))
 }
