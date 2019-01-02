@@ -13,11 +13,13 @@ const doWork = async (req, res, next, work, workname) => {
     if (!res.locals.validated) {
         res.locals.validated = true
         res.locals.input = res.locals.result = validate(req, res)
-        debug("WORK INPUT %o", res.locals.result)
+        if (debug.enabled) {
+            debug({INPUT: res.locals.result})
+        }
     }
     res.locals.result = await work(res.locals.result, req, res, next)
-    if (workname) {
-        debug("WORK %o:  %o", workname, res.locals.result)
+    if (debug.enabled && workname) {
+        debug({WORK: {name: workname, result: res.locals.result}})
     }
     next()
 }

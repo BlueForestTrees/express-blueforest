@@ -28,7 +28,7 @@ export default (ENV, errorAdapter) => () => {
                 url: req.originalUrl,
                 body: req.body
             }
-            debug(request)
+            debug({REQ: request})
             next()
         })
     }
@@ -44,7 +44,7 @@ export default (ENV, errorAdapter) => () => {
             next(err)
         } else {
             if (debug.enabled) {
-                debug("HTTP RESPONSE BODY %o", res.locals.result)
+                debug({RESP: res.locals.result})
             }
             res.json(res.locals.result)
         }
@@ -65,7 +65,24 @@ export default (ENV, errorAdapter) => () => {
             body = {errorCode: err.errorCode}
         }
         res.json(body)
-        console.error(err)
+
+        if (debug.enabled) {
+            debug(JSON.stringify({ERR: err}, null, 2))
+        } else {
+            const errLog = {
+                ERR: {
+                    req: {
+                        method: req.method,
+                        headers: req.headers,
+                        url: req.originalUrl,
+                        cookies: req.cookies,
+                        body: req.body
+                    },
+                    cause: err
+                }
+            }
+            console.error(JSON.stringify(errLog))
+        }
     })
 
     //LISTENING
