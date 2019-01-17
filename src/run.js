@@ -14,7 +14,7 @@ const doWork = async (req, res, next, work, workname) => {
         res.locals.validated = true
         res.locals.input = res.locals.result = validate(req, res)
         if (debug.enabled) {
-            debug({INPUT: res.locals.result})
+            debug({INPUT_VALIDATED: res.locals.result})
         }
     }
     res.locals.result = await work(res.locals.result, req, res, next)
