@@ -31,8 +31,3 @@ const validate = req => {
     }
     return matchedData(req)
 }
-
-export const thenNull = (req, res, next) => {
-    res.locals.result = null
-    next()
-}
