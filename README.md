@@ -52,7 +52,7 @@ module.exports = router
 ```
 
 
-Note: With many "run" stacked, the output of the previous is the input of the following:
+Note: With multiple "run", the output of the previous is the input of the next.
 ```javascript
 router.get("/api/game",
     run(()=>"hello"),
@@ -60,3 +60,6 @@ router.get("/api/game",
     run(msg=>{key:msg})// return {key:'hello mister!'}
 )
 ```
+
+
+
