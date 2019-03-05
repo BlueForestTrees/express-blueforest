@@ -28,6 +28,7 @@ export default startExpress(ENV, errorMapper)
 
 ## Adding a REST service
 With an empty REST_PATH folder, the server will serve nothing.
+
 *Let's add rest/postGameRest.js to add some behaviour*
 
 ```javascript
