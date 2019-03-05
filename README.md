@@ -82,9 +82,9 @@ const onGameCreate = game => {
 }
 ```
 
-### errorMapper, or how you decide to translate business error into http errors.
+### errorMapper: how you decide to translate business error into http errors.
 The most important is to detect each needed difference:
-ErrorMapper have to allways return an error with the good format: {status,body}
+errorMapper is a function that must return an error object with the format: {status,body}
 
 *Extract to insert in the first part "start a server"*
 ```javascript
