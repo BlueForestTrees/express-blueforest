@@ -35,13 +35,18 @@ import {objectNoEx} from "mongo-registry"
 import {run} from "express-blueforest"
 const router = Router()
 
+//A controller pipeline. Validations steps followed by one or many "run" calls.
 router.post("/api/game",
     check("_id").exists().isMongoId().withMessage("invalid mongo id").customSanitizer(objectNoEx),
     check("fragment").isIn(["impact", "roots", "facet"]),
     check("fragmentName").isLength({min: 1, max: 100}),
-    //game is allways the validated object by the previous validation steps.
-    run(game => col("Games").insertOne(game).then(res => res.result))
+    run(onGameCreate)
 )
+
+//game is the object issued from the validation steps.
+const onGameCreate = game => console.log("I create a game with fragment ", game.fragment)
+//const onGameCreate = ({_id, fragment, fragmentName}) => console.log("I create a game with fragment ", fragment)
+//const onGameCreate = ({_id, fragment, fragmentName}, req, res) => console.log("create game with request and response", req, res)
 
 module.exports = router
 ```
