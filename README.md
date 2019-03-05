@@ -5,7 +5,7 @@ Simplify the usage of express.js http server, with express-validator lib + error
 
 https://www.npmjs.com/package/express-blueforest
 
-## String a server
+## Start a server
 
 *This will start an http server with the desired configuration*
 ```javascript
@@ -67,15 +67,34 @@ router.get("/api/game",
 Errors management is in two parts: 
 ### business errors you throw in your business code:
 
-
+You can throw errors with the structure you want:
 ```javascript
+const throwThe = (name, msg) => {
+    const e = new Error(msg)
+    e.name = name
+    throw e
+}
 const onGameCreate = game => {
     [...]
     //Magical business error use case
-    Math.random() > 0.5 && throwThe("magicalError")    
+    Math.random() < 1 && throwThe("SpecificError#495", "It seems Math.random never gives 1 or upper.")    
     [...]
 }
 ```
 
 ### errorMapper, or how you decide to translate business error into http errors.
+The most important is to detect each needed difference:
+ErrorMapper have to allways return an error with the good format: {status,body}
 
+*Extract to insert in the first part "start a server"*
+```javascript
+[...]
+const errorMapper = err => {
+    if(err.name === 'SpecificError#495'){
+        return {status: 409, body:err.msg}
+    }
+}
+[...]
+```
+
+The http response will have the status and the body as defined by the error.
