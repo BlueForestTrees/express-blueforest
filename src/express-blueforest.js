@@ -5,6 +5,7 @@ import read from 'fs-readdir-recursive'
 import _run from "./run"
 import _errors from "./errors"
 import morgan from "morgan"
+import _thenNull from "./thenNull"
 
 const debug = require('debug')('api:express')
 const error = require('debug')('api:express:err')
@@ -12,6 +13,7 @@ export const Router = require("express").Router
 export const run = _run
 export const convert = _run
 export const errors = _errors
+export const thenNull = _thenNull
 
 export default (ENV, errorAdapter) => () => {
     const port = ENV.PORT || 80
@@ -53,7 +55,7 @@ export default (ENV, errorAdapter) => () => {
     //ERROR
     api.use(function (err, req, res, next) {
         if (errorAdapter) {
-            errorAdapter(err)
+            err = errorAdapter(err)
         }
         res.status(err.status || 500)
         let body = null

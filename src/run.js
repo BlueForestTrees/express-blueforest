@@ -4,10 +4,12 @@ const debug = require('debug')('api:express')
 const {validationResult} = require('express-validator/check')
 const {matchedData} = require('express-validator/filter')
 
-export default (work, workname) => (req, res, next) =>
-    Promise
+export default (work, workname) => async (req, res, next) => {
+    work = work.then && await work || work
+    return Promise
         .resolve(doWork(req, res, next, work, workname))
-        .catch(err => next(err));
+        .catch(err => next(err))
+}
 
 const doWork = async (req, res, next, work, workname) => {
     if (!res.locals.validated) {
