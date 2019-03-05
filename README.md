@@ -84,9 +84,7 @@ const onGameCreate = game => {
 ```
 
 ### errorMapper: how you decide to translate business error into http errors.
-The most important is to detect each needed difference:
 errorMapper is a function that must return an error object with the format: {status,body}
-
 
 ```javascript
 [...]
@@ -102,3 +100,6 @@ const errorMapper = err => {
 ```
 
 The http response will have the status and the body as defined by the error.
+
+Note: *If status is not provided, 500 is used.*
+Note: *body is optionnal for an error, so the response will have empty body.*
