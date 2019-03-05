@@ -5,7 +5,7 @@ Simplify the usage of express.js http server, with express-validator lib + error
 
 https://www.npmjs.com/package/express-blueforest
 
-## Example
+## String a server
 
 *This will start an http server with the desired configuration*
 ```javascript
@@ -21,11 +21,12 @@ const ENV = {
     MORGAN: process.env.MORGAN,
 }
 
-const errorMapper = null //don't use any errorMapper for now
+const errorMapper = null //don't use any errorMapper for now, see bellow
 
 export default startExpress(ENV, errorMapper)
 ```
 
+## Adding a REST service
 With an empty REST_PATH folder, the server will serve nothing.
 *Let's add rest/postGameRest.js to add some behaviour*
 
@@ -61,5 +62,20 @@ router.get("/api/game",
 )
 ```
 
+## Handling errors
 
+Errors management is in two parts: 
+### business errors you throw in your business code:
+
+
+```javascript
+const onGameCreate = game => {
+    [...]
+    //Magical business error use case
+    Math.random() > 0.5 && throwThe("magicalError")    
+    [...]
+}
+```
+
+### errorMapper, or how you decide to translate business error into http errors.
 
