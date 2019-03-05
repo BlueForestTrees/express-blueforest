@@ -50,3 +50,13 @@ const onGameCreate = game => console.log("I create a game with fragment ", game.
 
 module.exports = router
 ```
+
+
+Note: With many "run" stacked, the output of the previous is the input of the following:
+```javascript
+router.get("/api/game",
+    run(()=>"hello"),
+    run(msg=>`${msg}` mister!),
+    run(msg=>{key:msg})// return {key:'hello mister!'}
+)
+```
