@@ -102,4 +102,5 @@ const errorMapper = err => {
 The http response will have the status and the body as defined by the error.
 
 Note: *If status is not provided, 500 is used.*
+
 Note: *body is optionnal for an error, so the response will have empty body.*
