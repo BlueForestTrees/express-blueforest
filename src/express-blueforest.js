@@ -55,7 +55,7 @@ export default (ENV, errorAdapter) => () => {
     //ERROR
     api.use(function (err, req, res, next) {
         if (errorAdapter) {
-            err = errorAdapter(err)
+            err = errorAdapter(err) || err
         }
         res.status(err.status || 500)
         let body = null
