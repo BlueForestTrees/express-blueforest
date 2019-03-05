@@ -7,14 +7,14 @@ https://www.npmjs.com/package/express-blueforest
 
 ## Example
 
-*index.js*
+*This will start an http server with the desired configuration*
 ```javascript
 import startExpress from "express-blueforest"
 
 const ENV = {
     PORT: process.env.PORT || 80,
     
-    //REST_PATH: the folder where controllers are to be found.
+    //REST_PATH: the folder where controllers are to be found. Relative to app root.
     REST_PATH: process.env.REST_PATH || "rest",
     
     //MORGAN: optional, to override the morgan log format (https://github.com/expressjs/morgan)
