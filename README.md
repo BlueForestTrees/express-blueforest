@@ -1,7 +1,7 @@
 # express-blueforest
 
 ## Description
-Simplify the usage of express.js http server.
+Simplify the usage of express.js http server, with express-validator lib + error management.
 
 https://www.npmjs.com/package/express-blueforest
 
