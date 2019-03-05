@@ -86,12 +86,15 @@ const onGameCreate = game => {
 The most important is to detect each needed difference:
 errorMapper is a function that must return an error object with the format: {status,body}
 
-*Extract to insert in the first part "start a server"*
+
 ```javascript
 [...]
+//*insert this extract in the first part "start a server"*
 const errorMapper = err => {
     if(err.name === 'SpecificError#495'){
-        return {status: 409, body:err.msg}
+        return {status: 409, body:{errorCode: 495, msg:err.msg}}
+    }else if(err.code === 15650){
+        return {status: 409, body:{errorCode: 496, msg:"You reach code 15650"}}
     }
 }
 [...]
