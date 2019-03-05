@@ -39,6 +39,7 @@ router.post("/api/game",
     check("_id").exists().isMongoId().withMessage("invalid mongo id").customSanitizer(objectNoEx),
     check("fragment").isIn(["impact", "roots", "facet"]),
     check("fragmentName").isLength({min: 1, max: 100}),
+    //game is allways the validated object by the previous validation steps.
     run(game => col("Games").insertOne(game).then(res => res.result))
 )
 
