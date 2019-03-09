@@ -1,35 +1,43 @@
-import errors from "./errors"
+var errors = require("./errors")
+var debug = require('debug')('api:express')
+var validationResult = require('express-validator/check').validationResult
+var matchedData = require('express-validator/filter').matchedData
 
-const debug = require('debug')('api:express')
-const {validationResult} = require('express-validator/check')
-const {matchedData} = require('express-validator/filter')
-
-export default (work, workname) => async (req, res, next) => {
-    work = work.then && await work || work
-    return Promise
-        .resolve(doWork(req, res, next, work, workname))
-        .catch(err => next(err))
-}
-
-const doWork = async (req, res, next, work, workname) => {
-    if (!res.locals.validated) {
-        res.locals.validated = true
-        res.locals.input = res.locals.result = validate(req, res)
-        if (debug.enabled) {
-            debug({INPUT_VALIDATED: res.locals.result})
+exports.default = function (work, workname) {
+    var workPromise = work.then && work || Promise.resolve(work)
+    return function (req, res, next) {
+        try {
+            Promise
+                .resolve(doWork(req, res, next, workPromise, workname))
+                .catch(err => next(err))
+        } catch (err) {
+            console.error("ERROR", err)
+            next(err)
         }
     }
-    res.locals.result = await work(res.locals.result, req, res, next)
-    if (debug.enabled && workname) {
-        debug({WORK: {name: workname, result: res.locals.result}})
-    }
-    next()
 }
 
-const validate = req => {
-    const validationErrors = validationResult(req)
+function doWork(req, res, next, workPromise, workname) {
+    !res.locals.validated && validate(req, res)
+    return workPromise.then(function (work) {
+        var workResult = work(res.locals.result, req, res, next)
+        var workPromise = workResult.then && workResult || Promise.resolve(workResult)
+        workPromise.then(function (result) {
+            res.locals.result = result
+            debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
+            next()
+        })
+    }).catch(function (e) {
+        console.error(e)
+    })
+}
+
+function validate(req, res) {
+    res.locals.validated = true
+    var validationErrors = validationResult(req)
     if (!validationErrors.isEmpty()) {
         throw new errors.ValidationError(validationErrors.mapped())
     }
-    return matchedData(req)
+    res.locals.input = res.locals.result = matchedData(req)
+    debug.enabled && debug({INPUT_VALIDATED: res.locals.result})
 }
