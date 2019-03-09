@@ -7,8 +7,7 @@
   ],
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --recursive --exit \"test/**/*.js\"",
-    "build": "rimraf dist && babel src -d dist",
-    "prepublishOnly": "npm version patch && npm run build",
+    "prepublishOnly": "npm version patch",
     "npmpublish": "npm publish"
   },
   "description": "lib pour créer des micro-apis basé sur express et json",
