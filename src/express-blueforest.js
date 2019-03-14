@@ -8,7 +8,7 @@ var morgan = require("morgan")
 var _thenNull = require("./thenNull")
 
 var debug = require('debug')('api:express')
-var error = require('debug')('api:express:err')
+var error = require('debug')('api:err:express')
 
 exports.Router = require("express").Router
 exports.run = _run.default
@@ -75,7 +75,7 @@ function startExpress(ENV, errorAdapter) {
             if (debug.enabled) {
                 debug(JSON.stringify({ERR: err}, null, 2))
             } else {
-                var errLog = {
+                error({
                     ERR: {
                         req: {
                             method: req.method,
@@ -86,8 +86,7 @@ function startExpress(ENV, errorAdapter) {
                         },
                         cause: err
                     }
-                }
-                console.error(JSON.stringify(errLog))
+                })
             }
         })
 

@@ -21,7 +21,7 @@ function doWork(req, res, next, workPromise, workname) {
     !res.locals.validated && validate(req, res)
     return workPromise.then(function (work) {
         var workResult = work(res.locals.result, req, res, next)
-        var workPromise = workResult.then && workResult || Promise.resolve(workResult)
+        var workPromise = workResult && workResult.then && workResult || Promise.resolve(workResult)
         workPromise.then(function (result) {
             res.locals.result = result
             debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
