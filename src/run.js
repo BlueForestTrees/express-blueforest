@@ -7,29 +7,24 @@ exports.default = function (work, workname) {
     var workPromise = work.then && work || Promise.resolve(work)
     return function (req, res, next) {
         try {
-            Promise
-                .resolve(doWork(req, res, next, workPromise, workname))
+
+            !res.locals.validated && validate(req, res)
+            return workPromise.then(function (work) {
+                var workResult = work(res.locals.result, req, res, next)
+                var workPromise = workResult && workResult.then && workResult || Promise.resolve(workResult)
+                return workPromise.then(function (result) {
+                    res.locals.result = result
+                    debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
+                })
+            })
+                .then(next)
                 .catch(err => next(err))
+
         } catch (err) {
             console.error("ERROR", err)
             next(err)
         }
     }
-}
-
-function doWork(req, res, next, workPromise, workname) {
-    !res.locals.validated && validate(req, res)
-    return workPromise.then(function (work) {
-        var workResult = work(res.locals.result, req, res, next)
-        var workPromise = workResult && workResult.then && workResult || Promise.resolve(workResult)
-        workPromise.then(function (result) {
-            res.locals.result = result
-            debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
-            next()
-        })
-    }).catch(function (e) {
-        console.error(e)
-    })
 }
 
 function validate(req, res) {
@@ -39,5 +34,5 @@ function validate(req, res) {
         throw new errors.ValidationError(validationErrors.mapped())
     }
     res.locals.input = res.locals.result = matchedData(req)
-    debug.enabled && debug({INPUT_VALIDATED: res.locals.result})
+    debug.enabled && debug({VALIDATED: res.locals.result})
 }
