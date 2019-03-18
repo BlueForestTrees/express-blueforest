@@ -72,10 +72,10 @@ function startExpress(ENV, errorAdapter) {
             }
             res.json(body)
 
-            if (debug.enabled) {
-                debug(JSON.stringify({ERR: err}, null, 2))
+            if (ENV.NODE_ENV !== "production") {
+                console.error(err)
             } else {
-                error({
+                error("%o", {
                     ERR: {
                         req: {
                             method: req.method,

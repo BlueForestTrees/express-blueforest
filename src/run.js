@@ -7,21 +7,24 @@ exports.default = function (work, workname) {
     var workPromise = work.then && work || Promise.resolve(work)
     return function (req, res, next) {
         try {
-
             !res.locals.validated && validate(req, res)
-            return workPromise.then(function (work) {
-                var workResult = work(res.locals.result, req, res, next)
-                var workPromise = workResult && workResult.then && workResult || Promise.resolve(workResult)
-                return workPromise.then(function (result) {
-                    res.locals.result = result
-                    debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
+            return workPromise
+                .then(function (work) {
+                    var workResult = work(res.locals.result, req, res, next)
+                    var workPromise = workResult && workResult.then && workResult || Promise.resolve(workResult)
+
+                    return workPromise.then(function (result) {
+                        res.locals.result = result
+                        debug.enabled && workname && debug({WORK: {name: workname, result: res.locals.result}})
+                    })
+
                 })
-            })
                 .then(next)
-                .catch(err => next(err))
+                .catch(err => {
+                    next(err)
+                })
 
         } catch (err) {
-            console.error("ERROR", err)
             next(err)
         }
     }
